@@ -48,9 +48,12 @@ CREATE TABLE `User` (
 CREATE TABLE Client (
   user_id       INT NOT NULL,
   solde_points  INT NOT NULL DEFAULT 0,
+  shop_id  INT NOT NULL,
   PRIMARY KEY (user_id),
   CONSTRAINT fk_client_user FOREIGN KEY (user_id)
     REFERENCES `User` (id) ON DELETE CASCADE,
+  CONSTRAINT fk_client_shop FOREIGN KEY (shop_id)
+      REFERENCES Shop (id),
   CONSTRAINT chk_client_solde CHECK (solde_points >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

@@ -48,9 +48,9 @@ INSERT INTO StoreManager (user_id, shop_id) VALUES
   (3, 2);
 
 -- solde_points à 0 : il est recalculé à partir de l'historique (étape 6)
-INSERT INTO Client (user_id, solde_points) VALUES
-  (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0),
-  (10, 0), (11, 0), (12, 0), (13, 0), (14, 0), (15, 0);
+INSERT INTO Client (user_id, solde_points, shop_id) VALUES
+  (4, 0, 2), (5, 0, 1), (6, 0,  1), (7, 0,  2), (8, 0,  1), (9, 0,  2),
+  (10, 0,  2), (11, 0,  1), (12, 0,  2), (13, 0,  1), (14, 0,  2), (15, 0,  2);
 
 -- ---------------------------------------------------------------------
 -- 3. Catalogue de services

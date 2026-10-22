@@ -1,4 +1,4 @@
-package com.example.demo.domain;
+package com.example.demo.application.dto;
 
-public class ClientDTO {
-}
+public record ClientDTO(Integer id,String name,String email,String phone, String password_hash, Integer solde_points) {}
+

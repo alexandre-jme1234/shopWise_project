@@ -1,4 +1,8 @@
 package com.example.demo.domain.model;
 
-public class Statut {
+
+import jakarta.persistence.*;
+
+public enum Statut {
+    PLANIFIE, HONORE, ANNULE
 }
