@@ -1,0 +1,4 @@
+package com.example.demo.infrastructure.configuration;
+
+public class SecurityConfig {
+}
