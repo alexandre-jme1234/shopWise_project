@@ -1,8 +1,11 @@
 import com.example.demo.application.dto.ClientCreateRequest;
 import com.example.demo.application.dto.ClientResponse;
+import com.example.demo.application.handlers.GlobalExceptionHandler;
+import com.example.demo.domain.exceptions.UserExceptions;
 import com.example.demo.domain.model.Client;
 import com.example.demo.domain.model.Shop;
 import com.example.demo.domain.model.User;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.example.demo.domain.services.ClientService;
 import com.example.demo.domain.services.ShopService;
 import com.example.demo.infrastructure.repository.ClientRespository;
@@ -17,9 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ClientServiceTest {
@@ -42,6 +46,10 @@ public class ClientServiceTest {
     @Test
     public void createClient() {
         // GIVEN
+        Throwable exception = assertThrows(UserExceptions.class, () -> {
+            throw new UserExceptions("user already exist");
+        });
+
         String email = "alexandre@coliback.com";
         String name = "alexandre";
         String password = "ihuhjkjhjkhkhk";
@@ -64,8 +72,35 @@ public class ClientServiceTest {
         when(clientRespository.save(any(Client.class))).thenReturn(new_client);
         // WHEN
         ClientResponse resultat = clientService.createClient(client_demande, shop_id);
+        assertEquals("user already exist", exception.getMessage());
+
 
         // THEN
+        verify(passwordEncoder).encode(client_demande.password());
         verify(clientRespository).save(any(Client.class));
     };
+
+    @Test
+    public void emailEstdejaPris() {
+        // GIVEN
+        String email = "alexandre@coliback.com";
+        String name = "alexandre";
+        String password = "ihuhjkjhjkhkhk";
+        String phone = "0657545434";
+        Integer shop_id = 1;
+        Shop shop = new Shop("Orange", "Orange");
+
+        ClientCreateRequest client_demande = new ClientCreateRequest(name, email, password, phone);
+        when(shopService.getShopById(shop_id)).thenReturn(Optional.of(shop));
+        when(userRepository.existsByEmail(email)).thenReturn(true);
+
+        // WHEN
+        Throwable exception = assertThrows(UserExceptions.class, () -> {
+            clientService.createClient(client_demande, shop_id);
+        });
+
+        // THEN
+        assertEquals("user already exist", exception.getMessage());
+        verify(clientRespository, never()).save(any(Client.class));
+    }
 }

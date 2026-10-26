@@ -1,8 +1,10 @@
 package com.example.demo.application.controllers;
 
 
+import com.example.demo.application.dto.ClientCreateRequest;
 import com.example.demo.application.dto.ClientResponse;
 import com.example.demo.domain.exceptions.ClientExceptions;
+import com.example.demo.domain.exceptions.UserExceptions;
 import com.example.demo.domain.model.Client;
 import com.example.demo.domain.services.ClientService;
 import jakarta.validation.Valid;
@@ -30,10 +32,14 @@ public class ClientController {
         return ResponseEntity.ok(ClientResponse.from(client));
     };
 
-
     @PutMapping(value = "/{id}")
     public Client clientUpdate(@PathVariable("id") Integer id, @RequestBody Client client) {
         System.out.println(client);
         return clientService.updateOrInsertClient(client);
     }
+
+    @PostMapping(value = "/shops/{shop_id}")
+    public ClientResponse createClient(@PathVariable("shop_id") Integer shop_id, @RequestBody ClientCreateRequest client_request){
+        return clientService.createClient(client_request, shop_id);
+    };
 }
