@@ -30,6 +30,9 @@ build-job:       # This job runs in the build stage, which runs first.
   script:
     - ./mvnw compile
     - echo "Compile complete."
+  artifacts:
+    paths:
+      - target/*.jar
 
 test-job:
   stage: test
