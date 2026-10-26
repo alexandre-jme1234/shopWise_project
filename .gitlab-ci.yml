@@ -12,38 +12,28 @@
 # Stages run in sequential order, but jobs within stages run in parallel.
 #
 # For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
+image: eclipse-temurin:21
 
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test
-  - deploy
 
-include:
-  - template: Security/Dependency-Scanning.gitlab-ci.yml
+cache:
+  key:
+    files:
+      - pom.xml
+  paths:
+    - ~/.m2/repository/
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
-    - echo "Compiling the code..."
+    - ./mvnw compile
     - echo "Compile complete."
 
-unit-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
+test-job:
+  stage: test
   script:
-    - echo "Running unit tests... This will take about 60 seconds."
-    - sleep 60
-    - echo "Code coverage is 90%"
-
-lint-test-job:   # This job also runs in the test stage.
-  stage: test    # It can run at the same time as unit-test-job (in parallel).
-  script:
-    - echo "Linting code... This will take about 10 seconds."
-    - sleep 10
-    - echo "No lint issues found."
-
-deploy-job:      # This job runs in the deploy stage.
-  environment: production 
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-  script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
+    - ./mvnw test
+    - echo "Test Complete"
+  needs: ["build-job"]
