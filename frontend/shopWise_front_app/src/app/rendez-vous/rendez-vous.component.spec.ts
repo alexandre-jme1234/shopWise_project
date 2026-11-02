@@ -12,7 +12,7 @@ describe('RendezVousComponent', () => {
   const honore: RendezVous = { ...planifie, id: 2, statut: 'HONORE' };
 
   beforeEach(async () => {
-    service = jasmine.createSpyObj('RendezVousService', ['lister', 'honorer']);
+    service = jasmine.createSpyObj('RendezVousService', ['lister', 'honorer', 'annuler']);
     service.lister.and.returnValue(of([planifie, honore]));      // ≈ when(...).thenReturn(...)
     await TestBed.configureTestingModule({
       imports: [RendezVousComponent],
@@ -29,9 +29,9 @@ describe('RendezVousComponent', () => {
     expect(lignes.length).toBe(2);
   });
 
-  it('affiche le bouton Honorer seulement pour un rendez-vous planifié', () => {
+  it('affiche le bouton Honorer / Annuler seulement pour un rendez-vous planifié', () => {
     const boutons = fixture.nativeElement.querySelectorAll('tbody button');
-    expect(boutons.length).toBe(1);
+    expect(boutons.length).toBe(2);   // Honorer + Annuler, sur le seul rendez-vous planifié
   });
 
   it('honorer appelle le service puis recharge la liste', () => {
@@ -55,5 +55,18 @@ describe('RendezVousComponent', () => {
     fixture.detectChanges();
     expect(component.erreur).toContain('Impossible');
     expect(fixture.nativeElement.textContent).toContain('Aucun rendez-vous');
+  });
+
+  it('annuler appelle le service puis recharge la liste', () => {
+    service.annuler.and.returnValue(of({ ...planifie, statut: 'ANNULE' }));
+    component.annuler(planifie);
+    expect(service.annuler).toHaveBeenCalledWith(1, 1);
+    expect(service.lister).toHaveBeenCalledTimes(2);
+  });
+
+  it('affiche une erreur si annuler échoue (409)', () => {
+    service.annuler.and.returnValue(throwError(() => ({ status: 409 })));
+    component.annuler(planifie);
+    expect(component.erreur).toContain('ne peut pas être annulé');
   });
 });

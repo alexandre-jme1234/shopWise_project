@@ -19,4 +19,8 @@ export class RendezVousService {
   honorer(shopId: number, rendezVousId: number): Observable<RendezVous> {
     return this.http.patch<RendezVous>(`/shops/${shopId}/rendez-vous/${rendezVousId}/honorer`, {});  // quel verbe HTTP ? quelle fin d'URL ?
   }
+
+  annuler(shopId: number, rendezVousId: number): Observable<RendezVous> {
+    return this.http.patch<RendezVous>(`/shops/${shopId}/rendez-vous/${rendezVousId}/annuler`, {});
+  }
 }

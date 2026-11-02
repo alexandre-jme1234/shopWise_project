@@ -27,7 +27,10 @@
         <td>{{ rdv.client_id }}</td>
         <td><span class="badge">{{ rdv.statut }}</span></td>
         <td>
-          @if (rdv.statut === 'PLANIFIE') { <button type="button" (click)="honorer(rdv)">Honorer</button> }
+          @if (rdv.statut === 'PLANIFIE') {
+            <button type="button" (click)="honorer(rdv)">Honorer</button>
+            <button type="button" class="secondaire" (click)="annuler(rdv)">Annuler</button>
+          }
         </td>
       </tr>
     } @empty {

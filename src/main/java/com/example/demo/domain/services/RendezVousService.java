@@ -94,6 +94,27 @@ public class RendezVousService {
     };
 
     /**
+     * Passe un rendez-vous PLANIFIE à ANNULE (aucun point crédité).
+     */
+    @Transactional
+    public RendezVous annulerRendezVous(Integer shop_id, Integer rendez_vous_id) {
+        Shop shop = shopService.getShopById(shop_id)
+                .orElseThrow(() -> new ShopExceptions(shop_id));
+
+        RendezVous rendezVous = rendezVousRespository.findById(rendez_vous_id)
+                .orElseThrow(() -> new RendezVousExceptions(rendez_vous_id));
+        if (!rendezVous.getService().getShop().getId().equals(shop.getId())) {
+            throw new RendezVousExceptions(rendez_vous_id);
+        }
+        if (rendezVous.getStatut() != Statut.PLANIFIE) {
+            throw new RendezVousStatutExceptions(rendez_vous_id, rendezVous.getStatut());
+        }
+
+        rendezVous.setStatut(Statut.ANNULE);
+        return rendezVousRespository.save(rendezVous);
+    };
+
+    /**
      * Liste les rendez-vous d'une boutique, filtrés par client, date et statut (un filtre null = pas de filtre).
      */
     public List<RendezVous> listerRendezVous(Integer shop_id, Integer client_id, LocalDate date_filtrer, Statut statut) {

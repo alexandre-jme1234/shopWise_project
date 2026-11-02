@@ -289,4 +289,62 @@ public class RendezVousServiceTest {
         verify(transactionPointsRepository, never()).save(any());
         verify(clientRespository, never()).save(any());
     }
+
+    @Test
+    public void annulerRendezVous_planifie_passeAnnuleSansCrediterDePoints() {
+        // GIVEN
+        client.setSolde_points(10);
+        RendezVous rdv = new RendezVous(client, service, dateHeure);
+        when(rendezVousRespository.findById(42)).thenReturn(Optional.of(rdv));
+        when(rendezVousRespository.save(rdv)).thenReturn(rdv);
+
+        // WHEN
+        RendezVous result = rendezVousService.annulerRendezVous(1, 42);
+
+        // THEN
+        assertEquals(Statut.ANNULE, result.getStatut());
+        assertEquals(10, client.getSolde_points());
+        verify(transactionPointsRepository, never()).save(any());
+    }
+
+    @Test
+    public void annulerRendezVous_dejaHonore_leveRendezVousStatutExceptions() {
+        // GIVEN
+        RendezVous rdv = new RendezVous(client, service, dateHeure);
+        rdv.setStatut(Statut.HONORE);
+        when(rendezVousRespository.findById(42)).thenReturn(Optional.of(rdv));
+
+        // WHEN / THEN
+        assertThrows(RendezVousStatutExceptions.class, () -> rendezVousService.annulerRendezVous(1, 42));
+        verify(rendezVousRespository, never()).save(any());
+    }
+
+    @Test
+    public void annulerRendezVous_inconnu_leveRendezVousExceptions() {
+        // GIVEN
+        when(rendezVousRespository.findById(42)).thenReturn(Optional.empty());
+
+        // WHEN / THEN
+        assertThrows(RendezVousExceptions.class, () -> rendezVousService.annulerRendezVous(1, 42));
+    }
+
+    @Test
+    public void annulerRendezVous_dUneAutreBoutique_leveRendezVousExceptions() {
+        // GIVEN
+        Service serviceAutreShop = new Service();
+        serviceAutreShop.setShop(autreShop);
+        when(rendezVousRespository.findById(42)).thenReturn(Optional.of(new RendezVous(client, serviceAutreShop, dateHeure)));
+
+        // WHEN / THEN
+        assertThrows(RendezVousExceptions.class, () -> rendezVousService.annulerRendezVous(1, 42));
+    }
+
+    @Test
+    public void annulerRendezVous_boutiqueInconnue_leveShopExceptions() {
+        // GIVEN
+        when(shopService.getShopById(99)).thenReturn(Optional.empty());
+
+        // WHEN / THEN
+        assertThrows(ShopExceptions.class, () -> rendezVousService.annulerRendezVous(99, 42));
+    }
 }

@@ -36,4 +36,11 @@ export class RendezVousComponent implements OnInit {
       error: () => this.erreur = `Le rendez-vous ${rdv.id} ne peut pas être honoré`
     });
   }
+
+  annuler(rdv: RendezVous): void {
+    this.rendezVousService.annuler(this.shopId, rdv.id).subscribe({
+      next: () => this.charger(),
+      error: () => this.erreur = `Le rendez-vous ${rdv.id} ne peut pas être annulé`
+    });
+  }
 }

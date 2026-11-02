@@ -144,4 +144,32 @@ public class RendezVousControllerTest {
         mockMvc.perform(patch("/shops/1/rendez-vous/1/honorer"))
                 .andExpect(status().isConflict());
     }
+
+    @Test
+    public void annulerRendezVous_renvoie200() throws Exception {
+        // GIVEN
+        Client client = new Client();
+        client.setId(5);
+        Service service = new Service();
+        service.setId(7);
+        RendezVous annule = new RendezVous(client, service, LocalDateTime.of(2099, 11, 10, 14, 30));
+        annule.setId(1);
+        annule.setStatut(Statut.ANNULE);
+        when(rendezVousService.annulerRendezVous(1, 1)).thenReturn(annule);
+
+        // WHEN / THEN
+        mockMvc.perform(patch("/shops/1/rendez-vous/1/annuler"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statut").value("ANNULE"));
+    }
+
+    @Test
+    public void annulerRendezVous_dejaHonore_renvoie409() throws Exception {
+        // GIVEN
+        when(rendezVousService.annulerRendezVous(1, 1)).thenThrow(new RendezVousStatutExceptions(1, Statut.HONORE));
+
+        // WHEN / THEN
+        mockMvc.perform(patch("/shops/1/rendez-vous/1/annuler"))
+                .andExpect(status().isConflict());
+    }
 }

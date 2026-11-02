@@ -8,4 +8,15 @@ input, select, button { padding: .4rem .6rem; font-size: 1rem; }
 button { cursor: pointer; background: #1f3a5f; color: #fff; border: 0; border-radius: 4px; }
 .erreur { color: #b00020; }
 .badge { padding: .1rem .5rem; border-radius: 999px; font-size: .8rem; background: #e3e6ea; }
-@media (max-width: 600px) { th:nth-child(3), td:nth-child(3) { display: none; } }
+button.secondaire { background: #fff; color: #1f3a5f; border: 1px solid #1f3a5f; margin-left: .25rem; }
+
+/* Mobile : les tableaux deviennent des cartes empilées */
+@media (max-width: 600px) {
+  table, thead, tbody, tr, td { display: block; width: 100%; }
+  thead { display: none; }
+  tr { background: #fff; margin-bottom: .75rem; border: 1px solid #e3e6ea; border-radius: 6px; padding: .5rem; }
+  td { border: 0; padding: .2rem 0; }
+  th:nth-child(3), td:nth-child(3) { display: block; }
+  form.filtres label, form.carte label { flex: 1 1 100%; }
+  form.filtres button, form.carte button { width: 100%; }
+}

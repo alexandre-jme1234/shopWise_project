@@ -94,17 +94,38 @@ import java.util.List;
     };
 
     /**
+     * Passe un rendez-vous PLANIFIE à ANNULE (aucun point crédité).
+     */
+    @Transactional
+    public RendezVous annulerRendezVous(Integer shop_id, Integer rendez_vous_id) {
+<span class="fc" id="L101">        Shop shop = shopService.getShopById(shop_id)</span>
+<span class="fc" id="L102">                .orElseThrow(() -&gt; new ShopExceptions(shop_id));</span>
+
+<span class="fc" id="L104">        RendezVous rendezVous = rendezVousRespository.findById(rendez_vous_id)</span>
+<span class="fc" id="L105">                .orElseThrow(() -&gt; new RendezVousExceptions(rendez_vous_id));</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if (!rendezVous.getService().getShop().getId().equals(shop.getId())) {</span>
+<span class="fc" id="L107">            throw new RendezVousExceptions(rendez_vous_id);</span>
+        }
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (rendezVous.getStatut() != Statut.PLANIFIE) {</span>
+<span class="fc" id="L110">            throw new RendezVousStatutExceptions(rendez_vous_id, rendezVous.getStatut());</span>
+        }
+
+<span class="fc" id="L113">        rendezVous.setStatut(Statut.ANNULE);</span>
+<span class="fc" id="L114">        return rendezVousRespository.save(rendezVous);</span>
+    };
+
+    /**
      * Liste les rendez-vous d'une boutique, filtrés par client, date et statut (un filtre null = pas de filtre).
      */
     public List&lt;RendezVous&gt; listerRendezVous(Integer shop_id, Integer client_id, LocalDate date_filtrer, Statut statut) {
-<span class="fc" id="L100">        Shop shop = shopService.getShopById(shop_id)</span>
-<span class="fc" id="L101">                .orElseThrow(() -&gt; new ShopExceptions(shop_id));</span>
+<span class="fc" id="L121">        Shop shop = shopService.getShopById(shop_id)</span>
+<span class="fc" id="L122">                .orElseThrow(() -&gt; new ShopExceptions(shop_id));</span>
 
-<span class="fc" id="L103">        return rendezVousRespository.findByServiceShopId(shop.getId()).stream()</span>
-<span class="fc bfc" id="L104" title="All 4 branches covered.">                .filter(r -&gt; client_id == null || r.getClient().getId().equals(client_id))</span>
-<span class="fc bfc" id="L105" title="All 4 branches covered.">                .filter(r -&gt; date_filtrer == null || r.getDate_heure().toLocalDate().equals(date_filtrer))</span>
-<span class="fc bfc" id="L106" title="All 4 branches covered.">                .filter(r -&gt; statut == null || r.getStatut() == statut)</span>
-<span class="fc" id="L107">                .toList();</span>
+<span class="fc" id="L124">        return rendezVousRespository.findByServiceShopId(shop.getId()).stream()</span>
+<span class="fc bfc" id="L125" title="All 4 branches covered.">                .filter(r -&gt; client_id == null || r.getClient().getId().equals(client_id))</span>
+<span class="fc bfc" id="L126" title="All 4 branches covered.">                .filter(r -&gt; date_filtrer == null || r.getDate_heure().toLocalDate().equals(date_filtrer))</span>
+<span class="fc bfc" id="L127" title="All 4 branches covered.">                .filter(r -&gt; statut == null || r.getStatut() == statut)</span>
+<span class="fc" id="L128">                .toList();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

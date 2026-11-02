@@ -1,7 +1,7 @@
 # ShopWise
 
 SaaS pour commerces de proximité : **clients**, **rendez-vous** et **fidélisation** (points).
-Backend Java 21 / Spring Boot · Frontend Angular 17 (responsive) · MariaDB 11.4 · API ouverte sans authentification.
+Backend Java 21 / Spring Boot · Frontend Angular 17 (responsive : desktop, et mobile < 600 px où les tableaux deviennent des cartes) · MariaDB 11.4 · API ouverte sans authentification.
 
 ## User stories → réalisation
 
@@ -10,7 +10,7 @@ Backend Java 21 / Spring Boot · Frontend Angular 17 (responsive) · MariaDB 11.
 | Commerçant : créer / mettre à jour une fiche client | `POST /clients/shops/{shop_id}` · `PATCH /clients/{id}/shops/{shop_id}` | Clients (liste) |
 | Commerçant : créer un rendez-vous (client, date, heure, service) | `POST /shops/{shop_id}/rendez-vous` | — |
 | Commerçant : lister / filtrer les rendez-vous (date, statut, client) | `GET /shops/{shop_id}/rendez-vous?date=&statut=&client_id=` | Rendez-vous |
-| Commerçant : marquer un rendez-vous honoré | `PATCH /shops/{shop_id}/rendez-vous/{id}/honorer` (409 si déjà traité) | Rendez-vous (bouton « Honorer ») |
+| Commerçant : marquer un rendez-vous honoré ou annulé | `PATCH /shops/{shop_id}/rendez-vous/{id}/honorer` · `PATCH …/{id}/annuler` (409 si déjà traité) | Rendez-vous (boutons « Honorer » / « Annuler ») |
 | Points attribués automatiquement quand le rendez-vous est honoré | crédit de `Service.points` + ligne `TransactionPoints` (GAIN) | Espace client |
 | Client : se connecter (compte créé par le commerçant) | `POST /auth/login` (401 si identifiants faux, mot de passe vérifié en BCrypt) | Espace client |
 | Client : consulter solde et historique des points | `GET /clients/{id}/points` | Espace client |
@@ -41,8 +41,8 @@ cd frontend/shopWise_front_app && npm install && npx ng serve   # front sur :420
 
 | Partie | Commande | Résultat | Rapport |
 |---|---|---|---|
-| Backend (JUnit 5, Mockito, `@WebMvcTest`) | `./mvnw verify` | 45 tests · **74 % instructions · 97 % branches** | `couverture/backend/index.html` |
-| Frontend (Jasmine, Karma) | `cd frontend/shopWise_front_app && npm run test:ci` | 19 tests · **100 % instructions · 100 % branches** | `couverture/frontend/index.html` |
+| Backend (JUnit 5, Mockito, `@WebMvcTest`) | `./mvnw verify` | 52 tests · **75 % instructions · 97 % branches** | `couverture/backend/index.html` |
+| Frontend (Jasmine, Karma) | `cd frontend/shopWise_front_app && npm run test:ci` | 22 tests · **100 % instructions · 100 % branches** | `couverture/frontend/index.html` |
 
 Le front a besoin d'un Chrome : en local, `CHROME_BIN` peut pointer vers le Chromium de puppeteer
 (`export CHROME_BIN=$(node -e "console.log(require('puppeteer').executablePath())")`).
@@ -88,5 +88,4 @@ commits signés `Co-Authored-By: Claude`. Concerné notamment : filtres et tests
 connexion et consultation des points, écrans Angular et leurs tests, Dockerfiles, `docker-compose.yml`, workflow CI/CD.
 
 ## Limites connues
-- Annulation d'un rendez-vous (`ANNULE`) : non implémentée.
 - Formulaires de création/modification de client et de création de rendez-vous : disponibles par l'API, pas encore à l'écran.

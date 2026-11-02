@@ -44,5 +44,12 @@ import java.util.List;
 <span class="fc" id="L44">        RendezVous honore = rendezVousService.honorerRendezVous(shop_id, id);</span>
 <span class="fc" id="L45">        return ResponseEntity.ok(RendezVousResponse.from(honore));</span>
     };
+
+    @PatchMapping(value = &quot;/{id}/annuler&quot;)
+    public ResponseEntity&lt;RendezVousResponse&gt; annulerRendezVous(@PathVariable(&quot;shop_id&quot;) Integer shop_id,
+                                                                @PathVariable(&quot;id&quot;) Integer id) {
+<span class="fc" id="L51">        RendezVous annule = rendezVousService.annulerRendezVous(shop_id, id);</span>
+<span class="fc" id="L52">        return ResponseEntity.ok(RendezVousResponse.from(annule));</span>
+    };
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

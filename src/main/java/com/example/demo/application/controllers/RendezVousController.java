@@ -44,4 +44,11 @@ public class RendezVousController {
         RendezVous honore = rendezVousService.honorerRendezVous(shop_id, id);
         return ResponseEntity.ok(RendezVousResponse.from(honore));
     };
+
+    @PatchMapping(value = "/{id}/annuler")
+    public ResponseEntity<RendezVousResponse> annulerRendezVous(@PathVariable("shop_id") Integer shop_id,
+                                                                @PathVariable("id") Integer id) {
+        RendezVous annule = rendezVousService.annulerRendezVous(shop_id, id);
+        return ResponseEntity.ok(RendezVousResponse.from(annule));
+    };
 }
