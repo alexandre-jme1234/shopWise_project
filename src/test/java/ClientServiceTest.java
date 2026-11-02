@@ -102,5 +102,30 @@ public class ClientServiceTest {
         // THEN
         assertEquals("user already exist", exception.getMessage());
         verify(clientRespository, never()).save(any(Client.class));
+    };
+
+
+    @Test
+    public void updateClient() {
+        // GIVEN
+        Shop shop = new Shop("Orange", "Orange");
+        shop.setId(1);
+        Client existant = new Client();
+        existant.setId(5);
+        existant.setShop(shop);
+        existant.setEmail("old@test.com");
+
+        Client modifie = new Client();
+        modifie.setEmail("new@test.com");
+
+        when(shopService.getShopById(1)).thenReturn(Optional.of(shop));
+        when(clientRespository.findById(5)).thenReturn(Optional.of(existant));
+        when(clientRespository.updateOrInsert(any(Client.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // WHEN
+        Client result = clientService.updateClient(5, modifie, 1);
+
+        // THEN
+        assertEquals("new@test.com", result.getEmail());
     }
 }

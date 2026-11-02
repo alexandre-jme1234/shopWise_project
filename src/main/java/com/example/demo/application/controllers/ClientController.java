@@ -32,14 +32,17 @@ public class ClientController {
         return ResponseEntity.ok(ClientResponse.from(client));
     };
 
-    @PutMapping(value = "/{id}")
-    public Client clientUpdate(@PathVariable("id") Integer id, @RequestBody Client client) {
-        System.out.println(client);
-        return clientService.updateOrInsertClient(client);
-    }
-
     @PostMapping(value = "/shops/{shop_id}")
     public ClientResponse createClient(@PathVariable("shop_id") Integer shop_id, @RequestBody ClientCreateRequest client_request){
         return clientService.createClient(client_request, shop_id);
     };
+
+    @PatchMapping("/{id}/shops/{shop_id}")
+    public ResponseEntity<ClientResponse> updateClient(@PathVariable("id") Integer id,
+                                            @PathVariable("shop_id") Integer shop_id,
+                                            @RequestBody Client client_update) {
+        Client updated = clientService.updateClient(id , client_update, shop_id);
+        return ResponseEntity.ok(ClientResponse.from(updated));
+    }
+
 }

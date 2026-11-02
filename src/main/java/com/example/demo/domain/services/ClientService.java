@@ -7,6 +7,7 @@ import com.example.demo.domain.exceptions.ShopExceptions;
 import com.example.demo.domain.exceptions.UserExceptions;
 import com.example.demo.domain.model.Client;
 import com.example.demo.domain.model.Shop;
+import com.example.demo.domain.model.User;
 import com.example.demo.infrastructure.repository.ClientRespository;
 import com.example.demo.infrastructure.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -70,7 +71,23 @@ public class ClientService {
         return ClientResponse.from(saved);
     };
 
+    @Transactional
+    public Client updateClient(Integer client_id, Client client_update, Integer shop_id) {
+        Shop shop = shopService.getShopById(shop_id)
+                .orElseThrow(() -> new ShopExceptions(shop_id));
 
+        Client existant = clientRespository.findById(client_id)
+                .orElseThrow(() -> new ClientExceptions(client_id));
 
-}
+        if (!existant.getShop().getId().equals(shop.getId())) {
+            throw new ClientExceptions(client_id);
+        }
+
+        existant.setEmail(client_update.getEmail());
+        existant.setPhone(client_update.getPhone());
+        existant.setName(client_update.getName());
+
+        return clientRespository.updateOrInsert(existant);
+    }
+};
 
