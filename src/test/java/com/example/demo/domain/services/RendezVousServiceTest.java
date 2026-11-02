@@ -140,9 +140,10 @@ public class RendezVousServiceTest {
     }
 
     @Test
-    public void honorerRendezVous_planifie_passeHonoreEtCredite100Points() {
-        // GIVEN (données) : un client à 0 point, un rendez-vous PLANIFIE dans la boutique 1
+    public void honorerRendezVous_planifie_passeHonoreEtCrediteLesPointsDuService() {
+        // GIVEN (données) : un client à 0 point, un service à 15 points, un rendez-vous PLANIFIE dans la boutique 1
         client.setSolde_points(0);
+        service.setPoints(15);
         RendezVous rendezVous = new RendezVous(client, service, dateHeure);   // statut PLANIFIE par défaut
         rendezVous.setId(10);
 
@@ -155,7 +156,7 @@ public class RendezVousServiceTest {
 
         // THEN : ce que l'acteur a fait
         assertEquals(Statut.HONORE, result.getStatut());
-        assertEquals(100, client.getSolde_points());
+        assertEquals(15, client.getSolde_points());
         verify(transactionPointsRepository).save(any(TransactionPoints.class));
         verify(clientRespository).save(client);
     }

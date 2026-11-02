@@ -25,8 +25,6 @@ import java.time.LocalDateTime;
 @Service
 public class RendezVousService {
 
-    public static final int POINTS_RDV_HONORE = 100;
-
     @Autowired
     public RendezVousRespository rendezVousRespository;
 
@@ -66,7 +64,7 @@ public class RendezVousService {
     };
 
     /**
-     * Passe un rendez-vous PLANIFIE à HONORE et crédite le client de 100 points (trace dans TransactionPoints).
+     * Passe un rendez-vous PLANIFIE à HONORE et crédite le client des points du service (trace dans TransactionPoints).
      */
     @Transactional
     public RendezVous honorerRendezVous(Integer shop_id, Integer rendez_vous_id) {
@@ -84,10 +82,11 @@ public class RendezVousService {
 
         rendezVous.setStatut(Statut.HONORE);
         Client client = rendezVous.getClient();
-        client.crediter(POINTS_RDV_HONORE);
+        int points = rendezVous.getService().getPoints();
+        client.crediter(points);
 
         transactionPointsRepository.save(
-                new TransactionPoints(client, rendezVous, LocalDateTime.now(), Type.GAIN, POINTS_RDV_HONORE));
+                new TransactionPoints(client, rendezVous, LocalDateTime.now(), Type.GAIN, points));
         clientRespository.save(client);
         return rendezVousRespository.save(rendezVous);
     };
