@@ -71,15 +71,45 @@ DOCKERHUB_USER=<utilisateur> docker compose up -d
 ```
 Mise à jour : `docker compose pull && docker compose up -d` (la base est conservée dans le volume `db_data`).
 
-## Workflow Git
+## Workflow Git retenu
 
-Le workflow se déclenche au push sur la branche principale, lorsqu'une pull request est ouverte ou mise à jour.
-Les jobs s'enchaînent : le code est testé avant que les images soient construites et publiées.
-Chaque feature est développée dans une branche à part (`feature/NOM_FEATURE`) ; chaque commit suit l'historique du
-développement de la feature et référence son issue (`#n`). Une fois la pull request fusionnée sur la branche principale,
-le workflow publie les images.
+Modèle **GitHub Flow** : une branche principale toujours stable et déployable (`master`), et des branches courtes par fonctionnalité.
 
-Une issue par user story, avec labels (`backend`, `frontend`, `clients`, `rendez-vous`, `fidélité`, `ci-cd`).
+### 1. Une issue par user story
+- Chaque user story est une **issue GitHub** (titre = la user story, critères d'acceptation dans la description).
+- Labels : type (`feature`, `bug`, `docs`, `ci-cd`), partie (`backend`, `frontend`), module (`clients`, `rendez-vous`, `fidélité`).
+
+### 2. Une branche par issue
+```bash
+git switch master && git pull
+git switch -c feature/<n>-<description-courte>     # ex. feature/3-filtrer-rendez-vous
+```
+Préfixes : `feature/` (fonctionnalité), `fix/` (correction), `docs/`, `ci/`.
+
+### 3. Des commits petits, liés à l'issue
+Convention **Conventional Commits**, avec le numéro de l'issue :
+```
+<type>(<portée facultative>): <description> (#n)
+feat: lister et filtrer les rendez-vous d'une boutique (#3)
+feat(front): formulaire de création de rendez-vous (#2)
+fix: 409 si le rendez-vous est déjà honoré (#4)
+```
+Types utilisés : `feat`, `fix`, `test`, `docs`, `build`, `ci`, `refactor`.
+
+### 4. Pull request vers `master`
+- `git push -u origin feature/<n>-...`, puis ouverture d'une **pull request** dont la description contient `Closes #n`
+  (l'issue se ferme automatiquement à la fusion).
+- La **CI** (`.github/workflows/ci-cd.yml`) s'exécute sur la pull request : build, tests back et front, couverture.
+  On ne fusionne que si elle est verte.
+
+### 5. Fusion et livraison
+- Fusion dans `master`, puis suppression de la branche.
+- Le push sur `master` relance la CI ; si les tests passent, le job `docker` publie les images sur DockerHub
+  (`latest` et SHA du commit), prêtes pour le déploiement (voir « Déploiement »).
+
+### Remarque
+Pendant la phase finale du rendu, en développement solo, plusieurs commits ont été faits directement sur `master` :
+le workflow ci-dessus est celui appliqué pour la suite du projet.
 
 ## Usage de l'IA
 
