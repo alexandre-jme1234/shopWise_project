@@ -1,0 +1,19 @@
+<h1>Clients</h1>
+
+<form class="filtres" (ngSubmit)="charger()">
+  <label>Boutique <input type="number" name="shopId" [(ngModel)]="shopId" min="1"></label>
+  <button type="submit">Afficher</button>
+</form>
+
+@if (erreur) { <p class="erreur">{{ erreur }}</p> }
+
+<table>
+  <thead><tr><th>N°</th><th>Nom</th><th>Email</th><th>Points</th></tr></thead>
+  <tbody>
+    @for (client of clients; track client.id) {
+      <tr><td>{{ client.id }}</td><td>{{ client.name }}</td><td>{{ client.email }}</td><td>{{ client.solde_points }}</td></tr>
+    } @empty {
+      <tr><td colspan="4">Aucun client</td></tr>
+    }
+  </tbody>
+</table>

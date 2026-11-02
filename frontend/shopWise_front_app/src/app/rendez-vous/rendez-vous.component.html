@@ -1,0 +1,37 @@
+<h1>Rendez-vous</h1>
+
+<form class="filtres" (ngSubmit)="charger()">
+  <label>Boutique <input type="number" name="shopId" [(ngModel)]="shopId" min="1"></label>
+  <label>Date <input type="date" name="date" [(ngModel)]="filtres.date"></label>
+  <label>Statut
+    <select name="statut" [(ngModel)]="filtres.statut">
+      <option value="">Tous</option>
+      <option value="PLANIFIE">Planifié</option>
+      <option value="HONORE">Honoré</option>
+      <option value="ANNULE">Annulé</option>
+    </select>
+  </label>
+  <label>Client n° <input type="number" name="clientId" [(ngModel)]="filtres.clientId" min="1"></label>
+  <button type="submit">Filtrer</button>
+</form>
+
+@if (erreur) { <p class="erreur">{{ erreur }}</p> }
+
+<table>
+  <thead><tr><th>N°</th><th>Date</th><th>Client</th><th>Statut</th><th></th></tr></thead>
+  <tbody>
+    @for (rdv of rendezVous; track rdv.id) {
+      <tr>
+        <td>{{ rdv.id }}</td>
+        <td>{{ rdv.date_heure | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ rdv.client_id }}</td>
+        <td><span class="badge">{{ rdv.statut }}</span></td>
+        <td>
+          @if (rdv.statut === 'PLANIFIE') { <button type="button" (click)="honorer(rdv)">Honorer</button> }
+        </td>
+      </tr>
+    } @empty {
+      <tr><td colspan="5">Aucun rendez-vous</td></tr>
+    }
+  </tbody>
+</table>

@@ -1,0 +1,6 @@
+.topbar { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;
+  padding: .75rem 1rem; background: #1f3a5f; color: #fff; }
+.topbar nav { display: flex; flex-wrap: wrap; gap: 1rem; }
+.topbar a { color: #fff; text-decoration: none; opacity: .8; }
+.topbar a.actif { opacity: 1; border-bottom: 2px solid #fff; }
+.contenu { max-width: 960px; margin: 0 auto; padding: 1rem; }

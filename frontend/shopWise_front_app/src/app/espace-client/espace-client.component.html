@@ -1,0 +1,31 @@
+<h1>Espace client</h1>
+
+@if (!client) {
+  <form class="carte" (ngSubmit)="connecter()">
+    <label>Email <input type="email" name="email" [(ngModel)]="email" required></label>
+    <label>Mot de passe <input type="password" name="password" [(ngModel)]="password" required></label>
+    <button type="submit">Se connecter</button>
+  </form>
+} @else {
+  <p>Bonjour {{ client.name }} ({{ client.email }}) — <button type="button" (click)="deconnecter()">Se déconnecter</button></p>
+  @if (points) {
+    <h2>Solde : {{ points.solde_points }} points</h2>
+    <table>
+      <thead><tr><th>Date</th><th>Type</th><th>Rendez-vous</th><th>Points</th></tr></thead>
+      <tbody>
+        @for (t of points.transactions; track t.id) {
+          <tr>
+            <td>{{ t.date_heure | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ t.type === 'GAIN' ? 'Gain' : 'Utilisation' }}</td>
+            <td>{{ t.rendez_vous_id ?? '—' }}</td>
+            <td>{{ t.type === 'GAIN' ? '+' : '−' }}{{ t.points }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4">Aucune transaction</td></tr>
+        }
+      </tbody>
+    </table>
+  }
+}
+
+@if (erreur) { <p class="erreur">{{ erreur }}</p> }
