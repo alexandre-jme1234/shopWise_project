@@ -12,7 +12,7 @@ describe('RendezVousComponent', () => {
   const honore: RendezVous = { ...planifie, id: 2, statut: 'HONORE' };
 
   beforeEach(async () => {
-    service = jasmine.createSpyObj('RendezVousService', ['lister', 'honorer', 'annuler']);
+    service = jasmine.createSpyObj('RendezVousService', ['lister', 'honorer', 'annuler', 'creer']);
     service.lister.and.returnValue(of([planifie, honore]));      // ≈ when(...).thenReturn(...)
     await TestBed.configureTestingModule({
       imports: [RendezVousComponent],
@@ -68,5 +68,28 @@ describe('RendezVousComponent', () => {
     service.annuler.and.returnValue(throwError(() => ({ status: 409 })));
     component.annuler(planifie);
     expect(component.erreur).toContain('ne peut pas être annulé');
+  });
+
+  it('crée un rendez-vous puis recharge la liste', () => {
+    service.creer.and.returnValue(of({ ...planifie, id: 30 }));
+    component.nouveau = { client_id: 4, service_id: 1, date_heure: '2099-01-01T10:00' };
+    component.creer();
+    expect(service.creer).toHaveBeenCalledWith(1, { client_id: 4, service_id: 1, date_heure: '2099-01-01T10:00' });
+    expect(service.lister).toHaveBeenCalledTimes(2);
+    expect(component.nouveau.client_id).toBeNull();
+  });
+
+  it('refuse la création si un champ manque', () => {
+    component.nouveau = { client_id: 4, service_id: null, date_heure: '' };
+    component.creer();
+    expect(service.creer).not.toHaveBeenCalled();
+    expect(component.erreur).toContain('obligatoires');
+  });
+
+  it('affiche une erreur si la création échoue', () => {
+    service.creer.and.returnValue(throwError(() => ({ status: 400 })));
+    component.nouveau = { client_id: 4, service_id: 1, date_heure: '2000-01-01T10:00' };
+    component.creer();
+    expect(component.erreur).toContain('Création impossible');
   });
 });

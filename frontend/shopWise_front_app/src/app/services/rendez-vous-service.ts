@@ -23,4 +23,8 @@ export class RendezVousService {
   annuler(shopId: number, rendezVousId: number): Observable<RendezVous> {
     return this.http.patch<RendezVous>(`/shops/${shopId}/rendez-vous/${rendezVousId}/annuler`, {});
   }
+
+  creer(shopId: number, rdv: { client_id: number; service_id: number; date_heure: string }): Observable<RendezVous> {
+    return this.http.post<RendezVous>(`/shops/${shopId}/rendez-vous`, rdv);
+  }
 }

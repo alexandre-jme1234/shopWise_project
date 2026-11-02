@@ -20,3 +20,9 @@ export interface Points {
   solde_points: number;
   transactions: TransactionPoints[];
 }
+
+export interface ClientForm {
+  name: string;
+  email: string;
+  phone: string;
+}

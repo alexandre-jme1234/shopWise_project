@@ -15,6 +15,7 @@ export class RendezVousComponent implements OnInit {
   filtres: { date: string; statut: Statut | ''; clientId: number | null } = { date: '', statut: '', clientId: null };
   rendezVous: RendezVous[] = [];
   erreur = '';
+  nouveau: { client_id: number | null; service_id: number | null; date_heure: string } = { client_id: null, service_id: null, date_heure: '' };
 
   constructor(private rendezVousService: RendezVousService) {}
 
@@ -41,6 +42,16 @@ export class RendezVousComponent implements OnInit {
     this.rendezVousService.annuler(this.shopId, rdv.id).subscribe({
       next: () => this.charger(),
       error: () => this.erreur = `Le rendez-vous ${rdv.id} ne peut pas être annulé`
+    });
+  }
+
+  creer(): void {
+    this.erreur = '';
+    const { client_id, service_id, date_heure } = this.nouveau;
+    if (!client_id || !service_id || !date_heure) { this.erreur = 'Client, service, date et heure sont obligatoires'; return; }
+    this.rendezVousService.creer(this.shopId, { client_id, service_id, date_heure }).subscribe({
+      next: () => { this.nouveau = { client_id: null, service_id: null, date_heure: '' }; this.charger(); },
+      error: () => this.erreur = 'Création impossible (client ou service inconnu, date passée ?)'
     });
   }
 }

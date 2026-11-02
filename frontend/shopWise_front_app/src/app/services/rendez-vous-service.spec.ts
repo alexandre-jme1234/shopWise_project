@@ -45,4 +45,12 @@ describe('RendezVousService', () => {
     expect(req.request.method).toBe('PATCH');
     req.flush({ id: 7, client_id: 4, service_id: 1, statut: 'ANNULE', date_heure: '2026-11-02T10:00:00' });
   });
+
+  it('creer : POST /shops/{id}/rendez-vous', () => {
+    service.creer(1, { client_id: 4, service_id: 1, date_heure: '2099-01-01T10:00' }).subscribe();
+    const req = http.expectOne('/shops/1/rendez-vous');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body.client_id).toBe(4);
+    req.flush({ id: 30, client_id: 4, service_id: 1, statut: 'PLANIFIE', date_heure: '2099-01-01T10:00:00' });
+  });
 });

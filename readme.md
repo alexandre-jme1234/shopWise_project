@@ -7,8 +7,8 @@ Backend Java 21 / Spring Boot · Frontend Angular 17 (responsive : desktop, et m
 
 | User story | API | Écran |
 |---|---|---|
-| Commerçant : créer / mettre à jour une fiche client | `POST /clients/shops/{shop_id}` · `PATCH /clients/{id}/shops/{shop_id}` | Clients (liste) |
-| Commerçant : créer un rendez-vous (client, date, heure, service) | `POST /shops/{shop_id}/rendez-vous` | — |
+| Commerçant : créer / mettre à jour une fiche client | `POST /clients/shops/{shop_id}` · `PATCH /clients/{id}/shops/{shop_id}` | Clients (formulaire création / modification, liste) |
+| Commerçant : créer un rendez-vous (client, date, heure, service) | `POST /shops/{shop_id}/rendez-vous` | Rendez-vous (formulaire « Nouveau rendez-vous ») |
 | Commerçant : lister / filtrer les rendez-vous (date, statut, client) | `GET /shops/{shop_id}/rendez-vous?date=&statut=&client_id=` | Rendez-vous |
 | Commerçant : marquer un rendez-vous honoré ou annulé | `PATCH /shops/{shop_id}/rendez-vous/{id}/honorer` · `PATCH …/{id}/annuler` (409 si déjà traité) | Rendez-vous (boutons « Honorer » / « Annuler ») |
 | Points attribués automatiquement quand le rendez-vous est honoré | crédit de `Service.points` + ligne `TransactionPoints` (GAIN) | Espace client |
@@ -42,7 +42,7 @@ cd frontend/shopWise_front_app && npm install && npx ng serve   # front sur :420
 | Partie | Commande | Résultat | Rapport |
 |---|---|---|---|
 | Backend (JUnit 5, Mockito, `@WebMvcTest`) | `./mvnw verify` | 52 tests · **75 % instructions · 97 % branches** | `couverture/backend/index.html` |
-| Frontend (Jasmine, Karma) | `cd frontend/shopWise_front_app && npm run test:ci` | 22 tests · **100 % instructions · 100 % branches** | `couverture/frontend/index.html` |
+| Frontend (Jasmine, Karma) | `cd frontend/shopWise_front_app && npm run test:ci` | 31 tests · **100 % instructions · 100 % branches** | `couverture/frontend/index.html` |
 
 Le front a besoin d'un Chrome : en local, `CHROME_BIN` peut pointer vers le Chromium de puppeteer
 (`export CHROME_BIN=$(node -e "console.log(require('puppeteer').executablePath())")`).
@@ -88,4 +88,5 @@ commits signés `Co-Authored-By: Claude`. Concerné notamment : filtres et tests
 connexion et consultation des points, écrans Angular et leurs tests, Dockerfiles, `docker-compose.yml`, workflow CI/CD.
 
 ## Limites connues
-- Formulaires de création/modification de client et de création de rendez-vous : disponibles par l'API, pas encore à l'écran.
+- La boutique et le service se saisissent par leur numéro (pas encore de listes déroulantes).
+- Pas de session côté front : l'espace client se déconnecte au rechargement de la page.

@@ -34,4 +34,18 @@ describe('ClientService', () => {
     service.consulterPoints(4).subscribe(p => expect(p.solde_points).toBe(10));
     http.expectOne('/clients/4/points').flush({ client_id: 4, solde_points: 10, transactions: [] });
   });
+
+  it('creer : POST /clients/shops/{id}', () => {
+    service.creer(1, { name: 'Léo', email: 'l@s.fr', phone: '06', password: 'secret123' }).subscribe();
+    const req = http.expectOne('/clients/shops/1');
+    expect(req.request.method).toBe('POST');
+    req.flush({ id: 9, name: 'Léo', email: 'l@s.fr', phone: '06', solde_points: 0 });
+  });
+
+  it('modifier : PATCH /clients/{id}/shops/{shop_id}', () => {
+    service.modifier(1, 9, { name: 'Léo', email: 'l@s.fr', phone: '07' }).subscribe();
+    const req = http.expectOne('/clients/9/shops/1');
+    expect(req.request.method).toBe('PATCH');
+    req.flush({ id: 9, name: 'Léo', email: 'l@s.fr', phone: '07', solde_points: 0 });
+  });
 });

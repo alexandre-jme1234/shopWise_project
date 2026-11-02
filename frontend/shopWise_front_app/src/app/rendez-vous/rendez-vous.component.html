@@ -1,5 +1,14 @@
 <h1>Rendez-vous</h1>
 
+<h2>Nouveau rendez-vous</h2>
+<form class="carte" (ngSubmit)="creer()">
+  <label>Client n° <input type="number" name="nClient" [(ngModel)]="nouveau.client_id" min="1" required></label>
+  <label>Service n° <input type="number" name="nService" [(ngModel)]="nouveau.service_id" min="1" required></label>
+  <label>Date et heure <input type="datetime-local" name="nDate" [(ngModel)]="nouveau.date_heure" required></label>
+  <button type="submit">Créer</button>
+</form>
+
+<h2>Liste</h2>
 <form class="filtres" (ngSubmit)="charger()">
   <label>Boutique <input type="number" name="shopId" [(ngModel)]="shopId" min="1"></label>
   <label>Date <input type="date" name="date" [(ngModel)]="filtres.date"></label>

@@ -5,15 +5,28 @@
   <button type="submit">Afficher</button>
 </form>
 
+<h2>{{ enEdition === null ? 'Nouveau client' : 'Modifier le client n° ' + enEdition }}</h2>
+<form class="carte" (ngSubmit)="enregistrer()">
+  <label>Nom <input name="name" [(ngModel)]="formulaire.name" required maxlength="100"></label>
+  <label>Email <input type="email" name="email" [(ngModel)]="formulaire.email" required maxlength="150"></label>
+  <label>Téléphone <input name="phone" [(ngModel)]="formulaire.phone" maxlength="20"></label>
+  @if (enEdition === null) {
+    <label>Mot de passe (8 caractères min.) <input type="password" name="password" [(ngModel)]="formulaire.password" required minlength="8"></label>
+  }
+  <button type="submit">Enregistrer</button>
+  @if (enEdition !== null) { <button type="button" class="secondaire" (click)="annulerEdition()">Annuler</button> }
+</form>
+
+@if (message) { <p>{{ message }}</p> }
 @if (erreur) { <p class="erreur">{{ erreur }}</p> }
 
 <table>
-  <thead><tr><th>N°</th><th>Nom</th><th>Email</th><th>Points</th></tr></thead>
+  <thead><tr><th>N°</th><th>Nom</th><th>Email</th><th>Points</th><th></th></tr></thead>
   <tbody>
     @for (client of clients; track client.id) {
-      <tr><td data-label="N°">{{ client.id }}</td><td data-label="Nom">{{ client.name }}</td><td data-label="Email">{{ client.email }}</td><td data-label="Points">{{ client.solde_points }}</td></tr>
+      <tr><td data-label="N°">{{ client.id }}</td><td data-label="Nom">{{ client.name }}</td><td data-label="Email">{{ client.email }}</td><td data-label="Points">{{ client.solde_points }}</td><td data-label=""><button type="button" class="secondaire" (click)="modifier(client)">Modifier</button></td></tr>
     } @empty {
-      <tr><td colspan="4">Aucun client</td></tr>
+      <tr><td colspan="5">Aucun client</td></tr>
     }
   </tbody>
 </table>
