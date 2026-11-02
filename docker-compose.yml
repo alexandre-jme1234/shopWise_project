@@ -1,0 +1,46 @@
+services:
+  mariadb:
+    image: mariadb:11.4                # version LTS
+    container_name: shopwise-db
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_PASSWORD: dev
+      MARIADB_USER: shopWise
+      MARIADB_DATABASE: shopwise_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql                                   # les données survivent aux redémarrages
+      - ./src/main/resources/sql:/docker-entrypoint-initdb.d:ro  # schéma (01) puis données de démo (02)
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    image: ${DOCKERHUB_USER:-shopwise}/shopwise-backend:latest
+    container_name: shopwise-backend
+    environment:
+      # "mariadb" = nom du service ci-dessus (DNS interne du réseau compose), pas localhost
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/shopwise_db
+      SPRING_DATASOURCE_USERNAME: shopWise
+      SPRING_DATASOURCE_PASSWORD: dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      mariadb:
+        condition: service_healthy     # attend que la base accepte les connexions
+
+  frontend:
+    build: ./frontend/shopWise_front_app
+    image: ${DOCKERHUB_USER:-shopwise}/shopwise-frontend:latest
+    container_name: shopwise-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
