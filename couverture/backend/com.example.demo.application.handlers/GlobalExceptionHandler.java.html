@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.application.handlers</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.example.demo.application.handlers;
+import com.example.demo.domain.exceptions.AuthenticationExceptions;
 import com.example.demo.domain.exceptions.ClientExceptions;
 import com.example.demo.domain.exceptions.RendezVousExceptions;
 import com.example.demo.domain.exceptions.RendezVousStatutExceptions;
@@ -11,37 +12,42 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-<span class="fc" id="L14">public class GlobalExceptionHandler {</span>
+<span class="fc" id="L15">public class GlobalExceptionHandler {</span>
+
+    @ExceptionHandler(AuthenticationExceptions.class)
+    public ProblemDetail handleAuthentication(AuthenticationExceptions ex) {
+<span class="fc" id="L19">        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());</span>
+    }
 
     @ExceptionHandler(ClientExceptions.class)
     public ProblemDetail handleClientNotFound(ClientExceptions ex) {
-<span class="fc" id="L18">        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
+<span class="fc" id="L24">        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
     }
 
 
     @ExceptionHandler(ShopExceptions.class)
     public ProblemDetail handleShopNotFound(ShopExceptions ex) {
-<span class="fc" id="L24">        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
+<span class="fc" id="L30">        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
     }
 
     @ExceptionHandler(ServiceExceptions.class)
     public ProblemDetail handleServiceNotFound(ServiceExceptions ex) {
-<span class="nc" id="L29">        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
+<span class="nc" id="L35">        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
     }
 
     @ExceptionHandler(RendezVousExceptions.class)
     public ProblemDetail handleRendezVousNotFound(RendezVousExceptions ex) {
-<span class="nc" id="L34">        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
+<span class="nc" id="L40">        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
     }
 
     @ExceptionHandler(RendezVousStatutExceptions.class)
     public ProblemDetail handleRendezVousStatut(RendezVousStatutExceptions ex) {
-<span class="fc" id="L39">        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());</span>
+<span class="fc" id="L45">        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());</span>
     }
 
     @ExceptionHandler(UserExceptions.class)
     public ProblemDetail handleShopNotFound(UserExceptions ex) {
-<span class="nc" id="L44">        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
+<span class="nc" id="L50">        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
     }
 
 

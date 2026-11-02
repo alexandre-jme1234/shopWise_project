@@ -16,6 +16,8 @@ public interface ClientRespository extends JpaRepository<Client, Integer> {
 
     List<Client> findByShopId(Integer shopId);
 
+    Optional<Client> findByEmail(String email);
+
     @NullMarked
     Optional<Client> findById(Integer id);
 

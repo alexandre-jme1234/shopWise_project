@@ -21,7 +21,7 @@ public class RendezVous {
     @JoinColumn(name = &quot;service_id&quot;, nullable = false)
     public Service service;
 
-<span class="pc" id="L24">    @Enumerated(EnumType.STRING)</span>
+<span class="fc" id="L24">    @Enumerated(EnumType.STRING)</span>
     @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = &quot;statut_code&quot;, nullable = false, length = 20)
     private Statut statut = Statut.PLANIFIE;
@@ -30,8 +30,8 @@ public class RendezVous {
     @Column(name = &quot;date_heure&quot;)
     public LocalDateTime date_heure;
 
-<span class="nc" id="L33">    public RendezVous() {</span>
-<span class="nc" id="L34">    }</span>
+<span class="fc" id="L33">    public RendezVous() {</span>
+<span class="fc" id="L34">    }</span>
 
 <span class="fc" id="L36">    public RendezVous(Client client, Service service, LocalDateTime date_heure) {</span>
 <span class="fc" id="L37">        this.client = client;</span>

@@ -16,12 +16,14 @@ public interface ClientRespository extends JpaRepository&lt;Client, Integer&gt; 
 
     List&lt;Client&gt; findByShopId(Integer shopId);
 
+    Optional&lt;Client&gt; findByEmail(String email);
+
     @NullMarked
     Optional&lt;Client&gt; findById(Integer id);
 
     @Transactional
     default Client updateOrInsert(Client entity) {
-<span class="nc" id="L24">        return save(entity);</span>
+<span class="nc" id="L26">        return save(entity);</span>
     }
 
 

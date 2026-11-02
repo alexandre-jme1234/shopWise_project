@@ -1,4 +1,5 @@
 package com.example.demo.application.handlers;
+import com.example.demo.domain.exceptions.AuthenticationExceptions;
 import com.example.demo.domain.exceptions.ClientExceptions;
 import com.example.demo.domain.exceptions.RendezVousExceptions;
 import com.example.demo.domain.exceptions.RendezVousStatutExceptions;
@@ -12,6 +13,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AuthenticationExceptions.class)
+    public ProblemDetail handleAuthentication(AuthenticationExceptions ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
 
     @ExceptionHandler(ClientExceptions.class)
     public ProblemDetail handleClientNotFound(ClientExceptions ex) {
