@@ -15,10 +15,10 @@
       <tbody>
         @for (t of points.transactions; track t.id) {
           <tr>
-            <td>{{ t.date_heure | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td>{{ t.type === 'GAIN' ? 'Gain' : 'Utilisation' }}</td>
-            <td>{{ t.rendez_vous_id ?? '—' }}</td>
-            <td>{{ t.type === 'GAIN' ? '+' : '−' }}{{ t.points }}</td>
+            <td data-label="Date">{{ t.date_heure | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td data-label="Type">{{ t.type === 'GAIN' ? 'Gain' : 'Utilisation' }}</td>
+            <td data-label="Rendez-vous">{{ t.rendez_vous_id ?? '—' }}</td>
+            <td data-label="Points">{{ t.type === 'GAIN' ? '+' : '−' }}{{ t.points }}</td>
           </tr>
         } @empty {
           <tr><td colspan="4">Aucune transaction</td></tr>

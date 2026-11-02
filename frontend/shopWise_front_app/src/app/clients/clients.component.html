@@ -11,7 +11,7 @@
   <thead><tr><th>N°</th><th>Nom</th><th>Email</th><th>Points</th></tr></thead>
   <tbody>
     @for (client of clients; track client.id) {
-      <tr><td>{{ client.id }}</td><td>{{ client.name }}</td><td>{{ client.email }}</td><td>{{ client.solde_points }}</td></tr>
+      <tr><td data-label="N°">{{ client.id }}</td><td data-label="Nom">{{ client.name }}</td><td data-label="Email">{{ client.email }}</td><td data-label="Points">{{ client.solde_points }}</td></tr>
     } @empty {
       <tr><td colspan="4">Aucun client</td></tr>
     }

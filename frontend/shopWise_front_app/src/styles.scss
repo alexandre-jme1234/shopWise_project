@@ -20,3 +20,6 @@ button.secondaire { background: #fff; color: #1f3a5f; border: 1px solid #1f3a5f;
   form.filtres label, form.carte label { flex: 1 1 100%; }
   form.filtres button, form.carte button { width: 100%; }
 }
+@media (max-width: 600px) {
+  td[data-label]:not([data-label=""])::before { content: attr(data-label) " : "; font-weight: 600; }
+}

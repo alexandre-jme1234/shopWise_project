@@ -22,11 +22,11 @@
   <tbody>
     @for (rdv of rendezVous; track rdv.id) {
       <tr>
-        <td>{{ rdv.id }}</td>
-        <td>{{ rdv.date_heure | date:'dd/MM/yyyy HH:mm' }}</td>
-        <td>{{ rdv.client_id }}</td>
-        <td><span class="badge">{{ rdv.statut }}</span></td>
-        <td>
+        <td data-label="N°">{{ rdv.id }}</td>
+        <td data-label="Date">{{ rdv.date_heure | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td data-label="Client">{{ rdv.client_id }}</td>
+        <td data-label="Statut"><span class="badge">{{ rdv.statut }}</span></td>
+        <td data-label="">
           @if (rdv.statut === 'PLANIFIE') {
             <button type="button" (click)="honorer(rdv)">Honorer</button>
             <button type="button" class="secondaire" (click)="annuler(rdv)">Annuler</button>
