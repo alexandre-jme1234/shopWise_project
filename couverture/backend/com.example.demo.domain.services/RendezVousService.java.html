@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RendezVousService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.domain.services</a> &gt; <span class="el_source">RendezVousService.java</span></div><h1>RendezVousService.java</h1><pre class="source lang-java linenums">package com.example.demo.domain.services;
+
+import com.example.demo.application.dto.RendezVousCreateRequest;
+import com.example.demo.domain.exceptions.ClientExceptions;
+import com.example.demo.domain.exceptions.RendezVousExceptions;
+import com.example.demo.domain.exceptions.RendezVousStatutExceptions;
+import com.example.demo.domain.exceptions.ServiceExceptions;
+import com.example.demo.domain.exceptions.ShopExceptions;
+import com.example.demo.domain.model.Client;
+import com.example.demo.domain.model.RendezVous;
+import com.example.demo.domain.model.Shop;
+import com.example.demo.domain.model.Statut;
+import com.example.demo.domain.model.TransactionPoints;
+import com.example.demo.domain.model.Type;
+import com.example.demo.infrastructure.repository.ClientRespository;
+import com.example.demo.infrastructure.repository.RendezVousRespository;
+import com.example.demo.infrastructure.repository.ServiceRepository;
+import com.example.demo.infrastructure.repository.TransactionPointsRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+<span class="fc" id="L28">public class RendezVousService {</span>
+
+    @Autowired
+    public RendezVousRespository rendezVousRespository;
+
+    @Autowired
+    public ClientRespository clientRespository;
+
+    @Autowired
+    public ServiceRepository serviceRepository;
+
+    @Autowired
+    public ShopService shopService;
+
+    @Autowired
+    public TransactionPointsRepository transactionPointsRepository;
+
+    /**
+     * Crée un rendez-vous (statut PLANIFIE) pour un client et un service de la boutique.
+     */
+    @Transactional
+    public RendezVous createRendezVous(Integer shop_id, RendezVousCreateRequest request) {
+<span class="fc" id="L50">        Shop shop = shopService.getShopById(shop_id)</span>
+<span class="pc" id="L51">                .orElseThrow(() -&gt; new ShopExceptions(shop_id));</span>
+
+<span class="fc" id="L53">        Client client = clientRespository.findById(request.client_id())</span>
+<span class="fc" id="L54">                .orElseThrow(() -&gt; new ClientExceptions(request.client_id()));</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (!client.getShop().getId().equals(shop.getId())) {</span>
+<span class="fc" id="L56">            throw new ClientExceptions(request.client_id());</span>
+        }
+
+<span class="fc" id="L59">        com.example.demo.domain.model.Service service = serviceRepository.findById(request.service_id())</span>
+<span class="fc" id="L60">                .orElseThrow(() -&gt; new ServiceExceptions(request.service_id()));</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (!service.getShop().getId().equals(shop.getId())) {</span>
+<span class="fc" id="L62">            throw new ServiceExceptions(request.service_id());</span>
+        }
+
+<span class="fc" id="L65">        return rendezVousRespository.save(new RendezVous(client, service, request.date_heure()));</span>
+    };
+
+    /**
+     * Passe un rendez-vous PLANIFIE à HONORE et crédite le client des points du service (trace dans TransactionPoints).
+     */
+    @Transactional
+    public RendezVous honorerRendezVous(Integer shop_id, Integer rendez_vous_id) {
+<span class="fc" id="L73">        Shop shop = shopService.getShopById(shop_id)</span>
+<span class="pc" id="L74">                .orElseThrow(() -&gt; new ShopExceptions(shop_id));</span>
+
+<span class="fc" id="L76">        RendezVous rendezVous = rendezVousRespository.findById(rendez_vous_id)</span>
+<span class="fc" id="L77">                .orElseThrow(() -&gt; new RendezVousExceptions(rendez_vous_id));</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (!rendezVous.getService().getShop().getId().equals(shop.getId())) {</span>
+<span class="fc" id="L79">            throw new RendezVousExceptions(rendez_vous_id);</span>
+        }
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (rendezVous.getStatut() != Statut.PLANIFIE) {</span>
+<span class="fc" id="L82">            throw new RendezVousStatutExceptions(rendez_vous_id, rendezVous.getStatut());</span>
+        }
+
+<span class="fc" id="L85">        rendezVous.setStatut(Statut.HONORE);</span>
+<span class="fc" id="L86">        Client client = rendezVous.getClient();</span>
+<span class="fc" id="L87">        int points = rendezVous.getService().getPoints();</span>
+<span class="fc" id="L88">        client.crediter(points);</span>
+
+<span class="fc" id="L90">        transactionPointsRepository.save(</span>
+<span class="fc" id="L91">                new TransactionPoints(client, rendezVous, LocalDateTime.now(), Type.GAIN, points));</span>
+<span class="fc" id="L92">        clientRespository.save(client);</span>
+<span class="fc" id="L93">        return rendezVousRespository.save(rendezVous);</span>
+    };
+
+    /**
+     * Liste les rendez-vous d'une boutique, filtrés par client, date et statut (un filtre null = pas de filtre).
+     */
+    public List&lt;RendezVous&gt; listerRendezVous(Integer shop_id, Integer client_id, LocalDate date_filtrer, Statut statut) {
+<span class="fc" id="L100">        Shop shop = shopService.getShopById(shop_id)</span>
+<span class="fc" id="L101">                .orElseThrow(() -&gt; new ShopExceptions(shop_id));</span>
+
+<span class="fc" id="L103">        return rendezVousRespository.findByServiceShopId(shop.getId()).stream()</span>
+<span class="fc bfc" id="L104" title="All 4 branches covered.">                .filter(r -&gt; client_id == null || r.getClient().getId().equals(client_id))</span>
+<span class="fc bfc" id="L105" title="All 4 branches covered.">                .filter(r -&gt; date_filtrer == null || r.getDate_heure().toLocalDate().equals(date_filtrer))</span>
+<span class="fc bfc" id="L106" title="All 4 branches covered.">                .filter(r -&gt; statut == null || r.getStatut() == statut)</span>
+<span class="fc" id="L107">                .toList();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

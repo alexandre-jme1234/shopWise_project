@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RendezVous.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.domain.model</a> &gt; <span class="el_source">RendezVous.java</span></div><h1>RendezVous.java</h1><pre class="source lang-java linenums">package com.example.demo.domain.model;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import java.time.LocalDateTime;
+@Entity
+@Table(name = &quot;RendezVous&quot;)
+public class RendezVous {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = &quot;client_id&quot;, nullable = false)
+    public Client client;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;service_id&quot;, nullable = false)
+    public Service service;
+
+<span class="pc" id="L24">    @Enumerated(EnumType.STRING)</span>
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = &quot;statut_code&quot;, nullable = false, length = 20)
+    private Statut statut = Statut.PLANIFIE;
+
+    @JsonFormat(pattern=&quot;yyyy-MM-dd HH:mm:ss&quot;)
+    @Column(name = &quot;date_heure&quot;)
+    public LocalDateTime date_heure;
+
+<span class="nc" id="L33">    public RendezVous() {</span>
+<span class="nc" id="L34">    }</span>
+
+<span class="fc" id="L36">    public RendezVous(Client client, Service service, LocalDateTime date_heure) {</span>
+<span class="fc" id="L37">        this.client = client;</span>
+<span class="fc" id="L38">        this.service = service;</span>
+<span class="fc" id="L39">        this.date_heure = date_heure;</span>
+<span class="fc" id="L40">    }</span>
+
+    public Integer getId() {
+<span class="fc" id="L43">        return id;</span>
+    }
+
+    public void setId(Integer id) {
+<span class="fc" id="L47">        this.id = id;</span>
+<span class="fc" id="L48">    }</span>
+
+    public Client getClient() {
+<span class="fc" id="L51">        return client;</span>
+    }
+
+    public void setClient(Client client) {
+<span class="nc" id="L55">        this.client = client;</span>
+<span class="nc" id="L56">    }</span>
+
+    public Service getService() {
+<span class="fc" id="L59">        return service;</span>
+    }
+
+    public void setService(Service service) {
+<span class="nc" id="L63">        this.service = service;</span>
+<span class="nc" id="L64">    }</span>
+
+    public Statut getStatut() {
+<span class="fc" id="L67">        return statut;</span>
+    }
+
+    public void setStatut(Statut statut) {
+<span class="fc" id="L71">        this.statut = statut;</span>
+<span class="fc" id="L72">    }</span>
+
+    public LocalDateTime getDate_heure() {
+<span class="fc" id="L75">        return date_heure;</span>
+    }
+
+    public void setDate_heure(LocalDateTime date_heure) {
+<span class="nc" id="L79">        this.date_heure = date_heure;</span>
+<span class="nc" id="L80">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

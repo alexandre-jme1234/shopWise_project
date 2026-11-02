@@ -2,9 +2,12 @@ package com.example.demo.application.controllers;
 
 import com.example.demo.application.dto.RendezVousCreateRequest;
 import com.example.demo.domain.exceptions.ClientExceptions;
+import com.example.demo.domain.exceptions.RendezVousStatutExceptions;
+import com.example.demo.domain.exceptions.ShopExceptions;
 import com.example.demo.domain.model.Client;
 import com.example.demo.domain.model.RendezVous;
 import com.example.demo.domain.model.Service;
+import com.example.demo.domain.model.Statut;
 import com.example.demo.domain.services.RendezVousService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +16,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,5 +83,65 @@ public class RendezVousControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(BODY))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void listerRendezVous_avecFiltres_renvoie200EtLaListe() throws Exception {
+        // GIVEN
+        Client client = new Client();
+        client.setId(5);
+        Service service = new Service();
+        service.setId(7);
+        RendezVous rdv = new RendezVous(client, service, LocalDateTime.of(2099, 11, 10, 14, 30));
+        rdv.setId(1);
+        when(rendezVousService.listerRendezVous(1, 5, LocalDate.of(2099, 11, 10), Statut.PLANIFIE)).thenReturn(List.of(rdv));
+
+        // WHEN / THEN
+        mockMvc.perform(get("/shops/1/rendez-vous")
+                        .param("client_id", "5")
+                        .param("date", "2099-11-10")
+                        .param("statut", "PLANIFIE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].statut").value("PLANIFIE"));
+    }
+
+    @Test
+    public void listerRendezVous_boutiqueInconnue_renvoie404() throws Exception {
+        // GIVEN
+        when(rendezVousService.listerRendezVous(99, null, null, null)).thenThrow(new ShopExceptions(99));
+
+        // WHEN / THEN
+        mockMvc.perform(get("/shops/99/rendez-vous"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void honorerRendezVous_renvoie200() throws Exception {
+        // GIVEN
+        Client client = new Client();
+        client.setId(5);
+        Service service = new Service();
+        service.setId(7);
+        RendezVous honore = new RendezVous(client, service, LocalDateTime.of(2099, 11, 10, 14, 30));
+        honore.setId(1);
+        honore.setStatut(Statut.HONORE);
+        when(rendezVousService.honorerRendezVous(1, 1)).thenReturn(honore);
+
+        // WHEN / THEN
+        mockMvc.perform(patch("/shops/1/rendez-vous/1/honorer"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.statut").value("HONORE"));
+    }
+
+    @Test
+    public void honorerRendezVous_dejaHonore_renvoie409() throws Exception {
+        // GIVEN
+        when(rendezVousService.honorerRendezVous(1, 1)).thenThrow(new RendezVousStatutExceptions(1, Statut.HONORE));
+
+        // WHEN / THEN
+        mockMvc.perform(patch("/shops/1/rendez-vous/1/honorer"))
+                .andExpect(status().isConflict());
     }
 }

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Client.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.domain.model</a> &gt; <span class="el_source">Client.java</span></div><h1>Client.java</h1><pre class="source lang-java linenums">package com.example.demo.domain.model;
+
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name=&quot;Client&quot;)
+@PrimaryKeyJoinColumn(name = &quot;user_id&quot;)
+public class Client extends User {
+
+    @Column(name = &quot;solde_points&quot;)
+    public Integer solde_points;
+
+    public Integer getSolde_points() {
+<span class="fc" id="L15">        return solde_points;</span>
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = &quot;shop_id&quot;, nullable = false)
+    public Shop shop;
+
+    public void setSolde_points(Integer solde_points) {
+<span class="fc" id="L23">        this.solde_points = solde_points;</span>
+<span class="fc" id="L24">    }</span>
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L28">        return super.hashCode();</span>
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc" id="L33">        return super.equals(o);</span>
+    }
+
+    @Override
+    public void setPassword(String password) {
+<span class="fc" id="L38">        super.setPassword_hash(password);</span>
+<span class="fc" id="L39">    }</span>
+
+    @Override
+    public void setPhone(String phone) {
+<span class="fc" id="L43">        super.setPhone(phone);</span>
+<span class="fc" id="L44">    }</span>
+
+    @Override
+    public void setName(String name) {
+<span class="fc" id="L48">        super.setName(name);</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    public void setId(Integer id) {
+<span class="fc" id="L53">        super.setId(id);</span>
+<span class="fc" id="L54">    }</span>
+
+    public Client() {
+<span class="fc" id="L57">        super();</span>
+<span class="fc" id="L58">    }</span>
+
+    public void crediter(int points) {
+        // quelle vérification avant d'ajouter ?
+<span class="fc" id="L62">        this.solde_points += points;</span>
+<span class="fc" id="L63">    }</span>
+
+    public void debiter(int points) {
+        // quelles vérifications avant de retirer ?
+<span class="nc" id="L67">        this.solde_points -= points;}</span>
+
+    public Shop getShop() {
+<span class="fc" id="L70">        return shop;</span>
+    }
+
+    public void setShop(Shop shop) {
+<span class="fc" id="L74">        this.shop = shop;</span>
+<span class="fc" id="L75">    }</span>
+
+    @Override
+    public String getPassword() {
+<span class="nc" id="L79">        return super.getPassword_hash();</span>
+    }
+
+    @Override
+    public String getPhone() {
+<span class="fc" id="L84">        return super.getPhone();</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="fc" id="L89">        return super.getName();</span>
+    }
+
+    @Override
+    public Integer getId() {
+<span class="fc" id="L94">        return super.getId();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L99">        return &quot;Clients{&quot; +</span>
+                &quot;solde_points=&quot; + solde_points +
+                &quot;, name='&quot; + name + '\'' +
+                &quot;, phone='&quot; + phone + '\'' +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

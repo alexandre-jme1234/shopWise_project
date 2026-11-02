@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClientService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">demo</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.domain.services</a> &gt; <span class="el_source">ClientService.java</span></div><h1>ClientService.java</h1><pre class="source lang-java linenums">package com.example.demo.domain.services;
+
+import com.example.demo.application.dto.ClientCreateRequest;
+import com.example.demo.application.dto.ClientResponse;
+import com.example.demo.domain.exceptions.ClientExceptions;
+import com.example.demo.domain.exceptions.ShopExceptions;
+import com.example.demo.domain.exceptions.UserExceptions;
+import com.example.demo.domain.model.Client;
+import com.example.demo.domain.model.Shop;
+import com.example.demo.domain.model.User;
+import com.example.demo.infrastructure.repository.ClientRespository;
+import com.example.demo.infrastructure.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+import static java.lang.Character.getName;
+
+@Service
+<span class="fc" id="L23">public class ClientService {</span>
+
+    @Autowired
+    public ClientRespository clientRespository;
+
+    @Autowired
+    public UserRepository userRepository;
+
+    @Autowired
+    public ShopService shopService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+    /**
+     * upadate Client
+     *
+     * @param client
+     * @return
+     */
+    public Client updateOrInsertClient(Client client) {
+<span class="nc" id="L45">        return clientRespository.updateOrInsert(client);</span>
+    }
+
+    public Optional&lt;Client&gt; findById(Integer id){
+<span class="nc" id="L49">        return clientRespository.findById(id);</span>
+     };
+
+    @Transactional
+    public ClientResponse createClient(ClientCreateRequest client, Integer shop_id) {
+<span class="fc" id="L54">        Shop shop = shopService.getShopById(shop_id)</span>
+<span class="pc" id="L55">                .orElseThrow(() -&gt; new ShopExceptions(shop_id));</span>
+
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if(userRepository.existsByEmail(client.email())) {</span>
+<span class="fc" id="L58">            throw new UserExceptions(&quot;user already exist&quot;);</span>
+        }
+
+<span class="fc" id="L61">        Client new_client = new Client();</span>
+
+<span class="fc" id="L63">        new_client.setName(client.name());</span>
+<span class="fc" id="L64">        new_client.setPhone(client.phone());</span>
+<span class="fc" id="L65">        new_client.setEmail(client.email());</span>
+<span class="fc" id="L66">        new_client.setShop(shop);</span>
+<span class="fc" id="L67">        new_client.setSolde_points(0);</span>
+<span class="fc" id="L68">        new_client.setPassword(passwordEncoder.encode(client.password()));</span>
+
+<span class="fc" id="L70">        Client saved = clientRespository.save(new_client);</span>
+<span class="fc" id="L71">        return ClientResponse.from(saved);</span>
+    };
+
+    @Transactional
+    public Client updateClient(Integer client_id, Client client_update, Integer shop_id) {
+<span class="fc" id="L76">        Shop shop = shopService.getShopById(shop_id)</span>
+<span class="pc" id="L77">                .orElseThrow(() -&gt; new ShopExceptions(shop_id));</span>
+
+<span class="fc" id="L79">        Client existant = clientRespository.findById(client_id)</span>
+<span class="pc" id="L80">                .orElseThrow(() -&gt; new ClientExceptions(client_id));</span>
+
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if (!existant.getShop().getId().equals(shop.getId())) {</span>
+<span class="nc" id="L83">            throw new ClientExceptions(client_id);</span>
+        }
+
+<span class="fc" id="L86">        existant.setEmail(client_update.getEmail());</span>
+<span class="fc" id="L87">        existant.setPhone(client_update.getPhone());</span>
+<span class="fc" id="L88">        existant.setName(client_update.getName());</span>
+
+<span class="fc" id="L90">        return clientRespository.updateOrInsert(existant);</span>
+    }
+};
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
