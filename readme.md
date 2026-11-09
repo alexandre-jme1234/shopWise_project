@@ -65,13 +65,16 @@ Secrets à définir dans *Settings → Secrets and variables → Actions* : `DOC
 
 Sur un serveur avec Docker :
 ```bash
-git clone <url-du-depot> && cd <depot>
-DOCKERHUB_USER=<utilisateur> docker compose pull backend frontend   # images publiées par la CI
-DOCKERHUB_USER=<utilisateur> docker compose up -d
+git clone <https://github.com/alexandre-jme1234/shopWise_project.git> && cd shopWise_project
+DOCKERHUB_USER=<hanuman28> docker compose pull backend frontend   # images publiées par la CI
+DOCKERHUB_USER=<hanuman28> docker compose up -d
 ```
 Mise à jour : `docker compose pull && docker compose up -d` (la base est conservée dans le volume `db_data`).
 
 ## Workflow Git retenu
+
+- Issues : https://github.com/alexandre-jme1234/shopWise_project/issues?q=is%3Aissue
+- Actions : https://github.com/alexandre-jme1234/shopWise_project/actions
 
 Modèle **GitHub Flow** : une branche principale toujours stable et déployable (`master`), et des branches courtes par fonctionnalité.
 
